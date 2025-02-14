@@ -1,73 +1,43 @@
-#!/bin/sh
-# Tester script for assignment 1 and assignment 2
-# Author: Siddhant Jajoo
+#!/bin/bash
 
-set -e
-set -u
+# Default values
+numfiles=10
+writestr="AELD_IS_FUN"
 
-NUMFILES=10
-WRITESTR=AELD_IS_FUN
-WRITEDIR=/tmp/aeld-data
-username=$(cat conf/username.txt)
-
-if [ $# -lt 3 ]
-then
-	echo "Using default value ${WRITESTR} for string to write"
-	if [ $# -lt 1 ]
-	then
-		echo "Using default value ${NUMFILES} for number of files to write"
-	else
-		NUMFILES=$1
-	fi	
-else
-	NUMFILES=$1
-	WRITESTR=$2
-	WRITEDIR=/tmp/aeld-data/$3
+# Check if arguments are provided, else use defaults
+if [ ! -z "$1" ]; then
+    numfiles=$1
 fi
 
-MATCHSTR="The number of files are ${NUMFILES} and the number of matching lines are ${NUMFILES}"
-
-echo "Writing ${NUMFILES} files containing string ${WRITESTR} to ${WRITEDIR}"
-
-rm -rf "${WRITEDIR}"
-
-# create $WRITEDIR if not assignment1
-assignment=`cat ../conf/assignment.txt`
-
-if [ $assignment != 'assignment1' ]
-then
-	mkdir -p "$WRITEDIR"
-
-	#The WRITEDIR is in quotes because if the directory path consists of spaces, then variable substitution will consider it as multiple argument.
-	#The quotes signify that the entire string in WRITEDIR is a single string.
-	#This issue can also be resolved by using double square brackets i.e [[ ]] instead of using quotes.
-	if [ -d "$WRITEDIR" ]
-	then
-		echo "$WRITEDIR created"
-	else
-		exit 1
-	fi
+if [ ! -z "$2" ]; then
+    writestr=$2
 fi
-#echo "Removing the old writer utility and compiling as a native application"
-#make clean
-#make
 
-for i in $( seq 1 $NUMFILES)
-do
-	./writer.sh "$WRITEDIR/${username}$i.txt" "$WRITESTR"
+# Create /tmp/aeld-data directory
+mkdir -p /tmp/aeld-data
+
+# Get the username from the conf/username.txt
+username=$(cat /conf/username.txt)
+
+# Loop to create numfiles files using writer.sh
+for ((i = 1; i <= numfiles; i++)); do
+    # Construct the filename
+    writefile="/tmp/aeld-data/${username}${i}.txt"
+    
+    # Call writer.sh to create the file with writestr content
+    ./finder-app/writer.sh "$writefile" "$writestr"
 done
 
-OUTPUTSTRING=$(./finder.sh "$WRITEDIR" "$WRITESTR")
+# Run the finder.sh script and capture the output
+output=$(./finder-app/finder.sh /tmp/aeld-data "$writestr")
 
-# remove temporary directories
-rm -rf /tmp/aeld-data
+# Prepare the expected output
+expected_output="The number of files are $numfiles and the number of matching lines are $numfiles"
 
-set +e
-echo ${OUTPUTSTRING} | grep "${MATCHSTR}"
-if [ $? -eq 0 ]; then
-	echo "success"
-	exit 0
+# Compare the output with expected output
+if [ "$output" == "$expected_output" ]; then
+    echo "success"
 else
-	echo "failed: expected  ${MATCHSTR} in ${OUTPUTSTRING} but instead found"
-	exit 1
+    echo "error"
 fi
+
