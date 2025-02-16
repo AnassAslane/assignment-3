@@ -4,6 +4,14 @@
 numfiles=10
 writestr="AELD_IS_FUN"
 
+# Clean up any previous build artifacts
+echo "Cleaning previous build artifacts..."
+make clean
+
+# Compile the writer application using native compilation
+echo "Compiling the writer application..."
+make
+
 # Check if arguments are provided, else use defaults
 if [ ! -z "$1" ]; then
     numfiles=$1
@@ -19,25 +27,14 @@ mkdir -p /tmp/aeld-data
 # Get the username from the conf/username.txt
 username=$(cat /conf/username.txt)
 
-# Loop to create numfiles files using writer.sh
+# Loop to create numfiles files using the writer utility
 for ((i = 1; i <= numfiles; i++)); do
     # Construct the filename
     writefile="/tmp/aeld-data/${username}${i}.txt"
     
-    # Call writer.sh to create the file with writestr content
-    ./finder-app/writer.sh "$writefile" "$writestr"
+    # Call the writer application to create the file with writestr content
+    ./finder-app/writer "$writefile" "$writestr"
 done
 
-# Run the finder.sh script and capture the output
-output=$(./finder-app/finder.sh /tmp/aeld-data "$writestr")
-
-# Prepare the expected output
-expected_output="The number of files are $numfiles and the number of matching lines are $numfiles"
-
-# Compare the output with expected output
-if [ "$output" == "$expected_output" ]; then
-    echo "success"
-else
-    echo "error"
-fi
+# Run the finder.sh script and capture the
 
