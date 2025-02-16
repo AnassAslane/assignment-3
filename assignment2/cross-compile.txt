@@ -1,0 +1,7 @@
+Using built-in specs.
+COLLECT_GCC=aarch64-none-linux-gnu-gcc
+COLLECT_LTO_WRAPPER=/usr/lib/gcc/aarch64-none-linux-gnu/10.2.0/lto-wrapper
+Target: aarch64-none-linux-gnu
+Configured with: /home/anass/Downloads/arm-gnu-toolchain-13.3 (2).rel1-x86_64-aarch64-none-linux-gnu
+Thread model: posix
+gcc version 10.2.0 (GCC)
