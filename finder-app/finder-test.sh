@@ -4,14 +4,6 @@
 numfiles=10
 writestr="AELD_IS_FUN"
 
-# Clean up any previous build artifacts
-echo "Cleaning previous build artifacts..."
-make clean
-
-# Compile the writer application using native compilation
-echo "Compiling the writer application..."
-make
-
 # Check if arguments are provided, else use defaults
 if [ ! -z "$1" ]; then
     numfiles=$1
@@ -36,5 +28,6 @@ for ((i = 1; i <= numfiles; i++)); do
     ./finder-app/writer "$writefile" "$writestr"
 done
 
-# Run the finder.sh script and capture the
+# Run the finder.sh script and capture the output (if necessary)
+# Add any additional commands or actions if required below
 
